@@ -1,0 +1,120 @@
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+}
+
+@light-mode-text-color: hsl(206, 6%, 25%);
+@light-mode-text-color-lighter: lighten(@light-mode-text-color, 20%);
+@light-mode-text-color-lightest: lighten(@light-mode-text-color, 70%);
+@light-mode-bg-color: hsl(0, 0%, 93%);
+@light-mode-bg-color-darker: darken(@light-mode-bg-color, 10%);
+@light-mode-bg-color-lighter: lighten(@light-mode-bg-color, 6%);
+@light-mode-bg-color-transparent: fadeout(@light-mode-bg-color, 5%);
+@light-mode-border-color: darken(@light-mode-bg-color, 30%);
+@light-mode-bg-color-input: ligthen(@light-mode-bg-color, 50%);
+
+@dark-mode-text-color: hsl(0, 0%, 75%);
+@dark-mode-text-color-lighter: lighten(@dark-mode-text-color, 20%);
+@dark-mode-text-color-lightest: lighten(@dark-mode-text-color, 70%);
+@dark-mode-bg-color: hsl(0, 0%, 20%);
+@dark-mode-bg-color-darker: darken(@dark-mode-bg-color, 10%);
+@dark-mode-bg-color-lighter: lighten(@dark-mode-bg-color, 6%);
+@dark-mode-bg-color-transparent: fadeout(@dark-mode-bg-color, 5%);
+@dark-mode-border-color: darken(@dark-mode-bg-color, 30%);
+@dark-mode-bg-color-input: ligthen(@dark-mode-bg-color, 50%);
+
+
+:root {
+  --sidebar-font-size: 1em;
+  --thumbnail-max-width: 30em;
+  --thumbnail-max-height: 20em;
+  --photo-list-by-date-navigation-width: 40px;
+
+  // light theme variables
+  --text-color: @light-mode-text-color;
+  --text-color-lighter: @light-mode-text-color-lighter;
+  --text-color-lightest: @light-mode-text-color-lightest;
+  --bg-color: @light-mode-bg-color;
+  --bg-color-darker: @light-mode-bg-color-darker;
+  --bg-color-lighter: @light-mode-bg-color-lighter;
+  --bg-color-transparent: @light-mode-bg-color-transparent;
+  --border-color: @light-mode-border-color;
+  --bg-color-input: @light-mode-bg-color-input;
+}
+
+[data-theme="dark"] {
+  --text-color: @dark-mode-text-color;
+  --text-color-lighter: @dark-mode-text-color-lighter;
+  --text-color-lightest: @dark-mode-text-color-lightest;
+  --bg-color: @dark-mode-bg-color;
+  --bg-color-darker: @dark-mode-bg-color-darker;
+  --bg-color-lighter: @dark-mode-bg-color-lighter;
+  --bg-color-transparent: @dark-mode-bg-color-transparent;
+  --border-color: @dark-mode-border-color;
+  --bg-color-input: @dark-mode-bg-color-input;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  font-family: 'Barlow';
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  height: 100%;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input,
+textarea,
+button {
+  border-radius: 3px;
+  box-shadow: none;
+  border: 1px solid var(--border-color);
+  padding: .5em;
+  font-size: 1em;
+  font-family: inherit;
+  color: inherit;
+  background-color: var(--bg-color-input);
+}
+
+button {
+  &[disabled] {
+    color: var(--text-color-lighter);
+    border: 1px solid var(--bg-color-input);
+  }
+
+  &:hover:not([disabled]) {
+    cursor: pointer;
+    background-color: var(--bg-color);
+  }
+
+  &:active:not([disabled]) {
+    background-color: var(--border-color);
+  }
+}
+
+textarea {
+  line-height: 1.3em;
+}
+
+button.cancel {
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    background-color: transparent;
+    text-decoration: underline;
+  }
+}
