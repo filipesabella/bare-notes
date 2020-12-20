@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { allNotes } from './handlers/all-notes';
+import { deleteNote } from './handlers/delete-note';
 import { saveNote } from './handlers/save-note';
 import { Repository } from './repository';
 
@@ -18,7 +19,8 @@ app
   .use(bodyParser.text())
   .use(cors())
   .get('/notes', allNotes(repo))
-  .post('/note', saveNote(repo));
+  .post('/note', saveNote(repo))
+  .delete('/note/:id', deleteNote(repo));
 
 
 const port = process.env.PORT || 8000;

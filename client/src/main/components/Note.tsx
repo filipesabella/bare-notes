@@ -25,7 +25,32 @@ export const NoteComponent = () => {
     });
   };
 
+  const updateTitle = (title: string) => {
+    setNote(n => ({ ...n!, title }));
+    saveInApi.current && saveInApi.current({
+      ...note!,
+      title,
+    });
+  };
+
+  const validateTitle = async () => {
+    if (!note) return;
+
+    if (note.title === '') {
+      if (confirm('Delete note?')) {
+        await api.deleteNote(note.id);
+        window.location.href = '/';
+      } else {
+        updateTitle('a');
+      }
+    }
+  };
+
   return <div id="note">
+    {note && <input
+      value={note.title}
+      onChange={e => updateTitle(e.target.value)}
+      onBlur={() => validateTitle()} />}
     {note && <textarea
       autoFocus
       value={note.body}

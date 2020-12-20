@@ -2,12 +2,14 @@ import { Note } from '../common/types';
 
 const API_URL = 'http://localhost:8000/';
 
+const LOCAL_STORAGE_KEY = 'notes';
+
 export class Api {
   public async loadNotes(): Promise<Note[]> {
     const response = await ffetch('notes');
     const notes = await response.json() as Note[];
 
-    localStorage.setItem('notes', JSON.stringify(notes));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
 
     return notes;
   }
@@ -23,6 +25,15 @@ export class Api {
       body: JSON.stringify(note),
     });
   }
+
+  public async deleteNote(id: string): Promise<void> {
+    await ffetch('note/' + id, {
+      method: 'delete'
+    });
+    localStorage.setItem(
+      LOCAL_STORAGE_KEY,
+      JSON.stringify(notesFromLocalStorate().filter(n => n.id !== id)));
+  }
 }
 
 function notesFromLocalStorate(): Note[] {
@@ -37,7 +48,7 @@ function storeNote(note: Note): void {
     notes = notes.concat(note);
   }
 
-  localStorage.setItem('ntes', JSON.stringify(notes));
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
 }
 
 async function ffetch(path: string, opts: RequestInit = {}): Promise<Response> {

@@ -21,4 +21,9 @@ export class Repository {
 
     fs.writeFileSync(db, JSON.stringify(notes));
   }
+
+  public delete(id: string): void {
+    fs.writeFileSync(db, JSON.stringify(
+      this.loadNotes().filter(n => n.id !== id)));
+  }
 }
