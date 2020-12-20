@@ -1,7 +1,8 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { allNotes } from './handlers/sidebar-albums';
+import { allNotes } from './handlers/all-notes';
+import { saveNote } from './handlers/save-note';
 import { Repository } from './repository';
 
 const repo = new Repository();
@@ -16,7 +17,8 @@ app
   .use(bodyParser.json())
   .use(bodyParser.text())
   .use(cors())
-  .post('/notes', allNotes(repo));
+  .get('/notes', allNotes(repo))
+  .post('/note', saveNote(repo));
 
 
 const port = process.env.PORT || 8000;

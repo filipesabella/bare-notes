@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Note } from '../common/types';
 import { Api } from '../lib/api';
 import '../styles/app.less';
+import { NoteComponent } from './Note';
 import { SidebarComponent } from './Sidebar';
 
 const api = new Api();
@@ -14,27 +16,27 @@ const context = {
 const AppContext = createContext(context);
 
 export const App = () => {
-  const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState(null as Note[] | null);
+
+  useEffect(() => {
+    api.loadNotes().then(setNotes);
+  }, []);
 
   return <div id="app">
     <AppContext.Provider
-      value={{
-        ...context,
-        setLoading,
-      }}>
-      {loading && <div id="loading">Loading ...</div>}
+      value={context}>
       <BrowserRouter>
         <div className="content">
-          <SidebarComponent />
-          <Switch>
+          {notes && <SidebarComponent notes={notes} />}
+          {notes && <Switch>
             <Route path="/notes/:id" exact={true}>
-              <div>hello</div>
+              <NoteComponent />
             </Route>
-          </Switch>
+          </Switch>}
         </div>
       </BrowserRouter>
     </AppContext.Provider>
-  </div >;
+  </div>;
 };
 
 export const useAppContext = () => React.useContext(AppContext);
