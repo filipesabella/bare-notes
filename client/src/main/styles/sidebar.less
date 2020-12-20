@@ -7,30 +7,34 @@
   >ul {
     overflow: hidden;
     white-space: nowrap;
+    flex: 1;
 
     >li {
-      line-height: calc(var(--sidebar-font-size) * 2.5);
-    }
+      height: 2.5em;
+      line-height: 2.5em;
 
-    a {
-      user-select: none;
-      color: inherit;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      outline: none;
-      cursor: pointer;
-      padding: 0 1em;
+      a {
+        user-select: none;
+        display: inline-block;
+        width: 100%;
+        outline: none;
+        cursor: pointer;
+        padding: 0 1em;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
-      &:hover,
-      &.active {
-        background-color: var(--bg-color);
+        &.active {
+          background-color: var(--bg-color);
+        }
+
+        &:hover:not(.active) {
+          color: var(--text-color-lighter);
+        }
       }
-span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
     }
+  }
+
+  button {
+    border: none;
   }
 }

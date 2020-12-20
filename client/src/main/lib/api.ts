@@ -34,6 +34,16 @@ export class Api {
       LOCAL_STORAGE_KEY,
       JSON.stringify(notesFromLocalStorate().filter(n => n.id !== id)));
   }
+
+  public async createNote(title: string): Promise<Note> {
+    const note = {
+      id: pseudoUUID(),
+      title,
+      body: '',
+    };
+    await this.saveNote(note);
+    return note;
+  }
 }
 
 function notesFromLocalStorate(): Note[] {
@@ -58,5 +68,13 @@ async function ffetch(path: string, opts: RequestInit = {}): Promise<Response> {
       'Access-Control-Allow-Origin': '*'
     },
     ...opts,
+  });
+}
+
+function pseudoUUID() {
+  return 'xxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
   });
 }

@@ -65,6 +65,6 @@ function throttle(fn: (note: Note) => void) {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    timeoutId = setTimeout(() => fn(note), 1000);
+    timeoutId = setTimeout(() => fn(note), 500);
   };
 }
