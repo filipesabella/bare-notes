@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import * as auth from './auth';
 import { allNotes } from './handlers/all-notes';
 import { deleteNote } from './handlers/delete-note';
 import { saveNote } from './handlers/save-note';
@@ -18,9 +19,13 @@ app
   .use(bodyParser.json())
   .use(bodyParser.text())
   .use(cors())
-  .get('/notes', allNotes(repo))
-  .post('/note', saveNote(repo))
-  .delete('/note/:id', deleteNote(repo));
+  .use(require('cookie-parser')())
+  .use('/', express.static('../client/dist/'))
+  .get('/setup', auth.setup)
+  .post('/authenticate', auth.authenticate)
+  .get('/api/notes', auth.authenticating(allNotes(repo)))
+  .post('/api/notes', auth.authenticating(saveNote(repo)))
+  .delete('/api/notes/:id', auth.authenticating(deleteNote(repo)));
 
 
 const port = process.env.PORT || 8000;
