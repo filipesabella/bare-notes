@@ -23,7 +23,6 @@ app
     origin: 'http://localhost:1234',
   }))
   .use(require('cookie-parser')())
-  .use('/', express.static('../client/dist/'))
   .get('/setup', auth.setup)
   .post('/authenticate', auth.authenticate)
   .get('/notes', auth.authenticating(allNotes(repo)))
