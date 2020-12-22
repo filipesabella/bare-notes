@@ -33,6 +33,7 @@ export const authenticate = async (req: Request, res: Response) => {
   if (authenticator.verify({ token, secret })) {
     const authToken = authenticator.generateSecret(64);
 
+    // TODO have config for this
     const monthFromNow = new Date();
     monthFromNow.setMonth(monthFromNow.getMonth() + 1);
 

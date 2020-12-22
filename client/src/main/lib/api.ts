@@ -40,6 +40,7 @@ export class Api {
   }
 }
 
+// api that does storage ew
 function notesFromLocalStorate(): Note[] {
   return JSON.parse(localStorage.getItem('notes') || '[]') as Note[];
 }
@@ -64,11 +65,7 @@ async function ffetch<T = void>(path: string, opts: RequestInit = {})
   });
 
   if (response.status === 401) {
-    let success = false;
-    while (!success) {
-      success = await authenticate();
-    }
-
+    await authenticate();
     return ffetch(path, opts);
   }
 
@@ -80,11 +77,14 @@ async function ffetch<T = void>(path: string, opts: RequestInit = {})
     : await response.text() as any;
 }
 
+// nasty implementation of the auth bits below
 async function authenticate(msg = 'Please insert your TOTP code')
   : Promise<boolean> {
+  // what year is it
   const code = prompt(msg);
 
   if (!code) {
+    // if the user cancels the authenticatino, clear up all stored data
     localStorage.setItem(LOCAL_STORAGE_KEY, '[]');
     throw 'Could not authenticate';
   }
@@ -95,11 +95,9 @@ async function authenticate(msg = 'Please insert your TOTP code')
     body: code,
   });
 
-  if (result.status === 200) {
-    return true;
-  } else {
-    return authenticate('Invalid code');
-  }
+  return result.status === 200
+    ? true
+    : authenticate('Invalid code');
 }
 
 function pseudoUUID() {
