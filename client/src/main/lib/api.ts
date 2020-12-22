@@ -4,52 +4,29 @@ const API_URL = 'http://localhost:8000/';
 
 const LOCAL_STORAGE_KEY = 'notes';
 
-interface Result<T> {
-  data: T | null;
-  authenticatioNeeded: boolean;
-}
-
 export class Api {
-  public async authenticate(code: string): Promise<boolean> {
-    const response = await fetch('authenticate', {
-      method: 'post',
-      body: code,
-    });
-    return response.status === 200;
-  }
-
-  public async loadNotes(): Promise<Result<Note[]>> {
-    const result = await ffetch<Note[]>('api/notes');
-    if (!result.authenticatioNeeded) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(
-        result.data
-      ));
-    }
-    return result;
+  public async loadNotes(): Promise<Note[]> {
+    const notes = await ffetch<Note[]>('api/notes');
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
+    return notes;
   }
 
   public loadNote(id: string): Note {
     return notesFromLocalStorate().find(n => n.id === id)!;
   }
 
-  public async saveNote(note: Note): Promise<Result<void>> {
-    storeNote(note);
-    return await ffetch('api/notes', {
+  public async saveNote(note: Note): Promise<void> {
+    await ffetch('api/notes', {
       method: 'post',
       body: JSON.stringify(note),
     });
+    storeNote(note);
   }
 
-  public async deleteNote(id: string): Promise<Result<void>> {
-    const result = await ffetch('api/notes/' + id, {
-      method: 'delete'
-    });
-    if (!result.authenticatioNeeded) {
-      localStorage.setItem(
-        LOCAL_STORAGE_KEY,
-        JSON.stringify(notesFromLocalStorate().filter(n => n.id !== id)));
-    }
-    return result;
+  public async deleteNote(id: string): Promise<void> {
+    await ffetch('api/notes/' + id, { method: 'delete' }); localStorage.setItem(
+      LOCAL_STORAGE_KEY,
+      JSON.stringify(notesFromLocalStorate().filter(n => n.id !== id)));
   }
 
   public async createNote(title: string): Promise<Note> {
@@ -79,27 +56,50 @@ function storeNote(note: Note): void {
 }
 
 async function ffetch<T = void>(path: string, opts: RequestInit = {})
-  : Promise<Result<T>> {
+  : Promise<T> {
   const response = await fetch(API_URL + path, {
     mode: 'cors',
     credentials: 'include',
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
     ...opts,
   });
 
   if (response.status === 401) {
-    return {
-      data: null,
-      authenticatioNeeded: true,
-    };
+    let success = false;
+    while (!success) {
+      success = await authenticate();
+    }
+
+    return ffetch(path, opts);
   }
 
-  return {
-    data: await response.json() as T,
-    authenticatioNeeded: false,
-  };
+  const isJson = response.headers.get('Content-Type')
+    ?.includes('application/json');
+
+  return isJson
+    ? await response.json() as T
+    : await response.text() as any;
+}
+
+async function authenticate(msg = 'Please insert your TOTP code')
+  : Promise<boolean> {
+  const code = prompt(msg);
+
+  if (!code) {
+    localStorage.setItem(LOCAL_STORAGE_KEY, '[]');
+    throw 'Could not authenticate';
+  }
+
+  const result = await fetch(API_URL + 'authenticate', {
+    method: 'post',
+    credentials: 'include',
+    body: code,
+  });
+
+  if (result.status === 200) {
+    return true;
+  } else {
+    return authenticate('Invalid code');
+  }
 }
 
 function pseudoUUID() {

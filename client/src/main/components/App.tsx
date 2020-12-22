@@ -10,7 +10,6 @@ import { SidebarComponent } from './Sidebar';
 const api = new Api();
 const context = {
   api,
-  setLoading: (_: boolean) => { }
 };
 
 const AppContext = createContext(context);
@@ -18,30 +17,9 @@ const AppContext = createContext(context);
 export const App = () => {
   const [notes, setNotes] = useState(null as Note[] | null);
 
-  const authenticate = async (msg = 'Please insert your TOTP code') => {
-    const code = prompt(msg);
-
-    if (!code) return;
-
-    const success = await api.authenticate(code || '');
-    if (success) {
-      loadNotes();
-    } else {
-      authenticate('Invalid code');
-    }
-  };
-
-  const loadNotes = () => {
-    api.loadNotes().then(async result => {
-      if (result.authenticatioNeeded) {
-        await authenticate();
-      } else {
-        setNotes(result.data!);
-      }
-    });
-  };
-
-  useEffect(loadNotes, []);
+  useEffect(() => {
+    api.loadNotes().then(setNotes);
+  }, []);
 
   return <div id="app">
     <AppContext.Provider

@@ -18,7 +18,10 @@ app
   })
   .use(bodyParser.json())
   .use(bodyParser.text())
-  .use(cors())
+  .use(cors({
+    credentials: true,
+    origin: 'http://localhost:1234',
+  }))
   .use(require('cookie-parser')())
   .use('/', express.static('../client/dist/'))
   .get('/setup', auth.setup)
@@ -26,7 +29,6 @@ app
   .get('/api/notes', auth.authenticating(allNotes(repo)))
   .post('/api/notes', auth.authenticating(saveNote(repo)))
   .delete('/api/notes/:id', auth.authenticating(deleteNote(repo)));
-
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

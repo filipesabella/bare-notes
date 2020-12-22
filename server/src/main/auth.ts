@@ -14,9 +14,10 @@ type Handler = (req: Request, res: Response) => void;
 
 export const authenticating = (handler: Handler): Handler => {
   return (req, res) => {
-    const { token } = req.cookies;
-    // TODO validate date
-    const valid = loadData().token === token;
+    const { token, validUntil } = loadData();
+    const valid = token === req.cookies.token
+      && new Date() < new Date(validUntil!);
+
     if (valid) {
       handler(req, res);
     } else {
@@ -28,6 +29,7 @@ export const authenticating = (handler: Handler): Handler => {
 export const authenticate = async (req: Request, res: Response) => {
   const token = req.body.replace(/\s/g, '');
   const secret = loadData().secret;
+
   if (authenticator.verify({ token, secret })) {
     const authToken = authenticator.generateSecret(64);
 
@@ -42,7 +44,7 @@ export const authenticate = async (req: Request, res: Response) => {
 
     res.cookie('token', authToken, {
       expires: monthFromNow,
-      sameSite: 'strict',
+      sameSite: 'none',
     });
     res.sendStatus(200);
   } else {
@@ -56,7 +58,7 @@ export const setup = async (req: Request, res: Response) => {
   } else {
     const secret = authenticator.generateSecret(64);
 
-    const otp = authenticator.keyuri('bare-notes-user', 'Bare Notes', secret);
+    const otp = authenticator.keyuri('bare-notes', 'Bare Notes', secret);
     await qrcode.toFileStream(res, otp);
 
     storeData({ secret });
