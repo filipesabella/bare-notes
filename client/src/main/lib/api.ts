@@ -6,7 +6,7 @@ const LOCAL_STORAGE_KEY = 'notes';
 
 export class Api {
   public async loadNotes(): Promise<Note[]> {
-    const notes = await ffetch<Note[]>('api/notes');
+    const notes = await ffetch<Note[]>('notes');
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(notes));
     return notes;
   }
@@ -16,7 +16,7 @@ export class Api {
   }
 
   public async saveNote(note: Note): Promise<void> {
-    await ffetch('api/notes', {
+    await ffetch('notes', {
       method: 'post',
       body: JSON.stringify(note),
     });
@@ -24,7 +24,7 @@ export class Api {
   }
 
   public async deleteNote(id: string): Promise<void> {
-    await ffetch('api/notes/' + id, { method: 'delete' }); localStorage.setItem(
+    await ffetch('notes/' + id, { method: 'delete' }); localStorage.setItem(
       LOCAL_STORAGE_KEY,
       JSON.stringify(notesFromLocalStorate().filter(n => n.id !== id)));
   }

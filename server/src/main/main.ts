@@ -26,9 +26,9 @@ app
   .use('/', express.static('../client/dist/'))
   .get('/setup', auth.setup)
   .post('/authenticate', auth.authenticate)
-  .get('/api/notes', auth.authenticating(allNotes(repo)))
-  .post('/api/notes', auth.authenticating(saveNote(repo)))
-  .delete('/api/notes/:id', auth.authenticating(deleteNote(repo)));
+  .get('/notes', auth.authenticating(allNotes(repo)))
+  .post('/notes', auth.authenticating(saveNote(repo)))
+  .delete('/notes/:id', auth.authenticating(deleteNote(repo)));
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
