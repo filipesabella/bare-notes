@@ -15,11 +15,11 @@ export const NoteComponent = () => {
     setNote(api.loadNote(id));
   }, [id]);
 
-  const saveInApi = useRef(throttle(api.saveNote));
+  const saveNote = useRef(throttle(api.saveNote));
 
   const updateNote = (body: string) => {
     setNote(n => ({ ...n!, body }));
-    saveInApi.current && saveInApi.current({
+    saveNote.current && saveNote.current({
       ...note!,
       body,
     });
@@ -27,7 +27,7 @@ export const NoteComponent = () => {
 
   const updateTitle = (title: string) => {
     setNote(n => ({ ...n!, title }));
-    saveInApi.current && saveInApi.current({
+    saveNote.current && saveNote.current({
       ...note!,
       title,
     });
@@ -50,7 +50,7 @@ export const NoteComponent = () => {
     {note && <input
       value={note.title}
       onChange={e => updateTitle(e.target.value)}
-      onBlur={() => validateTitle()} />}
+      onBlur={() => validateTitle()}></input>}
     {note && <textarea
       autoFocus
       value={note.body}

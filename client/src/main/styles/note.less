@@ -1,13 +1,12 @@
 #note {
-  flex: 1;
   margin: 0 .5em;
-  background-color: var(--bg-color-lighter);
+  display: flex;
+  flex-direction: column;
 
   textarea {
+    flex: 1;
     border: none;
     outline: none;
-    width: 100%;
-    height: 100%;
     padding: 0 1em;
   }
 
@@ -15,8 +14,6 @@
     border: none;
     outline: none;
     font-size: 1.2em;
-    width: 100%;
-    margin: 0;
     padding: .5em .8em;
     font-weight: 500;
   }

@@ -42,7 +42,7 @@ export class Api {
 
 // api that does storage ew
 function notesFromLocalStorate(): Note[] {
-  return JSON.parse(localStorage.getItem('notes') || '[]') as Note[];
+  return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]') as Note[];
 }
 
 function storeNote(note: Note): void {

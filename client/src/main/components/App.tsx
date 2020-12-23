@@ -16,9 +16,15 @@ const AppContext = createContext(context);
 
 export const App = () => {
   const [notes, setNotes] = useState(null as Note[] | null);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
-    api.loadNotes().then(setNotes);
+    api.loadNotes()
+      .then(setNotes)
+      .catch(() => {
+        setOffline(true);
+        setNotes(JSON.parse(localStorage.getItem('notes') || '[]') as Note[]);
+      });
   }, []);
 
   return <div id="app">
@@ -32,6 +38,8 @@ export const App = () => {
               <NoteComponent />
             </Route>
           </Switch>}
+
+          {offline && <div className="offline">Offline Mode</div>}
         </div>
       </BrowserRouter>
     </AppContext.Provider>
