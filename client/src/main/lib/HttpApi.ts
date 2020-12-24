@@ -6,11 +6,18 @@ import { newNote } from './utils';
 const API_URL = 'http://localhost:8000/';
 
 export class HttpApi implements Api {
-  constructor(private readonly storage: Storage) { }
+  constructor(
+    private readonly storage: Storage,
+    private readonly setOffline: (offline: boolean) => void) { }
 
   public async loadNotes(): Promise<Note[]> {
-    const notes = await this.ffetch<Note[]>('notes');
-    return this.storage.store(notes);
+    try {
+      const notes = await this.ffetch<Note[]>('notes');
+      return this.storage.store(notes);
+    } catch (e) {
+      this.setOffline(true);
+      return [];
+    }
   }
 
   public loadNote(id: string): Note {
@@ -18,17 +25,24 @@ export class HttpApi implements Api {
   }
 
   public async saveNote(note: Note): Promise<void> {
-    await this.ffetch('notes', {
-      method: 'post',
-      body: JSON.stringify(note),
-    });
-
-    this.storage.save(note);
+    try {
+      await this.ffetch('notes', {
+        method: 'post',
+        body: JSON.stringify(note),
+      });
+      this.storage.save(note);
+    } catch (e) {
+      this.setOffline(true);
+    }
   }
 
   public async deleteNote(id: string): Promise<void> {
-    await this.ffetch('notes/' + id, { method: 'delete' });
-    this.storage.delete(id);
+    try {
+      await this.ffetch('notes/' + id, { method: 'delete' });
+      this.storage.delete(id);
+    } catch (e) {
+      this.setOffline(true);
+    }
   }
 
   public async createNote(title: string): Promise<Note> {

@@ -10,26 +10,27 @@ import '../styles/app.less';
 import { NoteComponent } from './Note';
 import { SidebarComponent } from './Sidebar';
 
-const storage = new Storage();
-const httpApi = new HttpApi(storage);
-const offlineApi = new OfflineApi(storage);
 
 export const App = () => {
   const [notes, setNotes] = useState(null as Note[] | null);
   const [offline, setOffline] = useState(false);
+
+  const storage = new Storage();
+  const httpApi = new HttpApi(storage, setOffline);
+  const offlineApi = new OfflineApi(storage);
+
   const [api, setApi] = useState(httpApi as Api);
 
   useEffect(() => {
-    api.loadNotes()
-      .then(setNotes)
-      .catch(() => {
-        setOffline(true);
-
-        setApi(offlineApi);
-
-        offlineApi.loadNotes().then(setNotes);
-      });
+    api.loadNotes().then(setNotes);
   }, []);
+
+  useEffect(() => {
+    if (offline) {
+      setApi(offlineApi);
+      offlineApi.loadNotes().then(setNotes);
+    }
+  }, [offline]);
 
   return <div id="app">
     <BrowserRouter>
