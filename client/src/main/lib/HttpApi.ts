@@ -10,6 +10,15 @@ export class HttpApi implements Api {
     private readonly storage: Storage,
     private readonly setOffline: (offline: boolean) => void) { }
 
+  public async ping(): Promise<boolean> {
+    try {
+      await fetch(API_URL);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   public async loadNotes(): Promise<Note[]> {
     try {
       const notes = await this.ffetch<Note[]>('notes');

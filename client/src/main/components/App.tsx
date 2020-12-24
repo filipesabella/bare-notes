@@ -29,6 +29,16 @@ export const App = () => {
     if (offline) {
       setApi(offlineApi);
       offlineApi.loadNotes().then(setNotes);
+
+      const intervalId = window.setInterval(() => {
+        httpApi.ping().then(online => {
+          if (online) {
+            setOffline(false);
+            window.clearInterval(intervalId);
+            // TODO: sync
+          }
+        });
+      }, 1000);
     }
   }, [offline]);
 
