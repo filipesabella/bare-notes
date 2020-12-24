@@ -22,6 +22,8 @@ export const App = () => {
   const [api, setApi] = useState(httpApi as Api);
 
   useEffect(() => {
+    // TODO on load, check if there's need to sync before loading
+    // the notes from the server
     api.loadNotes().then(setNotes);
   }, []);
 
