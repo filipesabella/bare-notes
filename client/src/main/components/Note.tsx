@@ -2,11 +2,14 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Note } from '../common/types';
+import { Api } from '../lib/Api';
 import '../styles/note.less';
-import { useAppContext } from './App';
 
-export const NoteComponent = () => {
-  const { api } = useAppContext();
+interface Props {
+  api: Api;
+}
+
+export const NoteComponent = ({ api }: Props) => {
   const { id } = useParams<{ id: string }>();
 
   const [note, setNote] = useState(null as Note | null);
@@ -15,7 +18,7 @@ export const NoteComponent = () => {
     setNote(api.loadNote(id));
   }, [id]);
 
-  const saveNote = useRef(throttle(api.saveNote));
+  const saveNote = useRef(throttle(n => api.saveNote(n)));
 
   const updateNote = (body: string) => {
     setNote(n => ({ ...n!, body }));

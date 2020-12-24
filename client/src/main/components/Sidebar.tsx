@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Note } from '../common/types';
+import { Api } from '../lib/Api';
 import '../styles/sidebar.less';
-import { useAppContext } from './App';
 
 interface Props {
   notes: Note[];
+  api: Api;
 }
 
-export const SidebarComponent = ({ notes }: Props) => {
-  const { api } = useAppContext();
-
+export const SidebarComponent = ({ notes, api }: Props) => {
   const createNote = async () => {
     const title = prompt('Title') || '';
     if (title.trim()) {
