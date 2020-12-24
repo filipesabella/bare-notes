@@ -33,9 +33,10 @@ export const App = () => {
       const intervalId = window.setInterval(() => {
         httpApi.ping().then(online => {
           if (online) {
-            setOffline(false);
             window.clearInterval(intervalId);
-            // TODO: sync
+            setOffline(false);
+            httpApi.sync();
+            setApi(httpApi);
           }
         });
       }, 1000);

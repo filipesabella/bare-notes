@@ -20,6 +20,10 @@ export const NoteComponent = ({ api }: Props) => {
 
   const saveNote = useRef(throttle(n => api.saveNote(n)));
 
+  useEffect(() => {
+    saveNote.current = throttle(n => api.saveNote(n));
+  }, [api]);
+
   const updateNote = (body: string) => {
     setNote(n => ({ ...n!, body }));
     saveNote.current && saveNote.current({
